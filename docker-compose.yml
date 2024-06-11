@@ -1,0 +1,73 @@
+services:
+  postgres:
+    container_name: ms_pg_sql
+    image: postgres
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      PGDATA: /var/lib/postgressql/data
+    volumes:
+      - /e/research/java/microservices/e-commerce-data:/var/lib/postgressql/data
+    ports:
+      - 5432:5432
+    networks:
+      - microservices-net
+    restart: unless-stopped
+
+  pgadmin:
+    container_name: ms_pgadmin
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin@pgadmin.org}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    volumes:
+#      - pgadmin:/var/lib/pgadmin
+      - /e/research/java/microservices/e-commerce-pgadmin-data:/var/lib/pgadmin
+    ports:
+      - 5050:80
+    networks:
+      - microservices-net
+    restart: unless-stopped
+
+#  mongodb:
+#    container_name: ms_mongo_db
+#    image: mongo
+#    ports:
+#      - 27017:27017
+#    volumes:
+#      - /e/research/java/microservices/e-commerce-pgadmin-data:/data
+#    environment:
+#      MONGO_INITDB_ROOT_USERNAME: root
+#      MONGO_INITDB_ROOT_PASSWORD: root
+#    networks:
+#      - microservices-net
+#    restart: unless-stopped
+
+#  mongo-express:
+#    image: mongo-express
+#    container_name: ms_mongo_express
+#    depends_on:
+#      - mongodb
+#    restart: unless-stopped
+#    ports:
+#      - 8081:8081
+#    environment:
+#      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+#      ME_CONFIG_MONGODB_ADMINPASSWORD: root
+#      ME_CONFIG_MONGODB_URL: mongodb://root:root@mongodb:27017
+#      ME_CONFIG_MONGODB_SERVER: ms_mongo_db
+#      ME_CONFIG_MONGODB_PORT: "27017"
+#    networks:
+#      - microservices-net
+
+  mail-dev:
+    image: maildev/maildev
+    container_name: ms_mail_dev
+    ports:
+      - 1080:1080
+      - 1025:1025
+
+networks:
+  microservices-net:
+    driver: bridge
